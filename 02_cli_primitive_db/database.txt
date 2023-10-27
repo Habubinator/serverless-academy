@@ -1,0 +1,67 @@
+[
+  {
+    "user": "Sarah",
+    "gender": "Female",
+    "age": 23
+  },
+  {
+    "user": "Yevhenii",
+    "gender": "Male",
+    "age": 19
+  },
+  {
+    "user": "Andriy",
+    "gender": "Male",
+    "age": 19
+  },
+  {
+    "user": "Maria",
+    "gender": "Female",
+    "age": 18
+  },
+  {
+    "user": "Anastasia",
+    "gender": "Female",
+    "age": 16
+  },
+  {
+    "user": "Nikolai",
+    "gender": "Male",
+    "age": 34
+  },
+  {
+    "user": "Valeriy",
+    "gender": "Male",
+    "age": 54
+  },
+  {
+    "user": "Sergey",
+    "gender": "Male",
+    "age": 32
+  },
+  {
+    "user": "Lilia",
+    "gender": "Non-Binary",
+    "age": 25
+  },
+  {
+    "user": "Abhaziy",
+    "gender": "Male",
+    "age": 84
+  },
+  {
+    "user": "Bobby",
+    "gender": "Male",
+    "age": 47
+  },
+  {
+    "user": "Clara",
+    "gender": "Non-Binary",
+    "age": 23
+  },
+  {
+    "user": "Oleksiy",
+    "gender": "Male",
+    "age": 21
+  }
+]
