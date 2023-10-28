@@ -1,19 +1,18 @@
 const TelegramBot = require('node-telegram-bot-api');
-const axios = require("axios")
-const NodeCache = require( "node-cache" );
 
-const {botToken, weatherApiToken} = require("./config/config").getEnv()
+const {botToken} = require("./config/config").getEnv()
 
 const bot = new TelegramBot(botToken, {polling: true});
 bot.setMyCommands([{ command: '/start', description: 'Start the bot' }])
 
-const myCache = new NodeCache({useClones: false});
+const findForecast = require("./forecast.js")
+const findExchange = require("./exchange.js")
 
 let defaultOptions = {
     reply_markup: {
         keyboard: [
             ['Forecast in Odesa'],
-            ['Excange rates']
+            ['Exchange rates']
         ],
         resize_keyboard: true 
     }
@@ -49,7 +48,7 @@ bot.on("text", async (msg) => {
             
             // 05 Task
 
-            case 'Excange rates':
+            case 'Exchange rates':
                 options = {
                     reply_markup: {
                         keyboard: [
@@ -77,102 +76,3 @@ bot.on("text", async (msg) => {
         return bot.sendMessage(chatId, "Error has occured. \nMaybe API services is temporaly down",defaultOptions);
     }
 });
-
-async function findForecast(interval){
-
-    const response = await axios.get('https://api.openweathermap.org/data/2.5/forecast', {
-            params: {
-                "lat": 46.482952,
-                "lon": 30.712481,
-                "appid": weatherApiToken
-            }
-    });
-
-    const weatherDataArr = response.data.list;
-
-    const step = interval / 3 === 1 ? 1 : 2;
-    let result = "";
-
-    for (let i = 0; i < weatherDataArr.length; i += step) {
-
-        let date = convertTimestamptoTime(weatherDataArr[i].dt)
-        let degrees = (weatherDataArr[i].main.temp - 273.15).toFixed(2)
-        let wind = weatherDataArr[i].wind.speed.toFixed(2)
-        let weatherEmoji = findWeatherEmoji(weatherDataArr[i].weather[0].main)
-
-        result += `${date} - 🌡️ ${degrees} °C 💨 ${wind} Km/h ${weatherEmoji}\n`;
-    }
-
-    return result;
-
-}
-
-function convertTimestamptoTime(unixTimestamp) {
-
-    let dateObj = new Date(unixTimestamp * 1000);
-    let utcString = dateObj.toUTCString();
-    let time = utcString.slice(5, 12) + utcString.slice(-12, -7);
-
-    return time;
-
-}
-
-function findWeatherEmoji(condition) {
-    const emojis = {
-        "Thunderstorm": "⛈",
-        "Drizzle": "🌦",
-        "Rain": "🌧",
-        "Snow": "❄️",
-        "Clear": "☀️",
-        "Clouds": "⛅️",
-    };
-    return emojis[condition] || "🌫";
-}
-
-async function findExchange(bankName, currencyCode){
-
-    switch(bankName){
-
-        case "Privat":
-
-            response = myCache.get("PrivatResponce");
-            if (!response){
-                response = await axios.get('https://api.privatbank.ua/p24api/pubinfo?exchange&coursid=11');
-                myCache.set("PrivatResponce", response, 300);
-            }
-
-            pos = ['EUR', 'USD'].indexOf(currencyCode)
-            if(pos == -1)   throw new Error("Not supported currencyCode. Try 'USD' or 'EUR'");
-
-            emoji = currencyCode == "USD"? "🇺🇸" : "🇪🇺"; 
-
-            return `${emoji} Buy: ${(+response.data[pos].buy).toFixed(2)} Sell: ${(+response.data[pos].sale).toFixed(2)} \n`;
-
-        case "Mono":
-            
-            response = myCache.get("MonoResponce");
-            if (!response){
-                response = await axios.get('https://api.monobank.ua/bank/currency');
-                myCache.set("MonoResponce", response, 300);
-            }
-            
-            pos = ['EUR', 'USD'].indexOf(currencyCode)
-            if(pos == -1){
-                throw new Error("Not supported currencyCode. Try 'USD' or 'EUR'");
-            }
-            else{
-                var currency = pos == 1? 840 : 978
-            }
-            
-            let excangeData = response.data.filter((value)=>{
-                return value.currencyCodeB == 980 && value.currencyCodeA == currency
-            });
-
-            emoji = currencyCode == "USD"? "🇺🇸" : "🇪🇺"; 
-
-            return `${emoji} Buy: ${excangeData[0].rateBuy.toFixed(2)} Sell: ${excangeData[0].rateSell.toFixed(2)} \n`;
-
-        default :
-            throw new Error("Not supported bank name. Try 'Privat' or 'Mono'.")
-    }
-}
