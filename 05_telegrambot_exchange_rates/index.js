@@ -141,22 +141,11 @@ async function findExchange(bankName, currencyCode){
                 myCache.set("PrivatResponce", response, 300);
             }
 
-            switch(currencyCode){
-
-                case "USD":
-                    pos = 1;
-                    break;
-
-                case "EUR":
-                    pos = 0;
-                    break;
-
-                default:
-                    throw new Error("Not supported currencyCode. Try 'USD' or 'EUR'")
-            }
-
-            emoji = currencyCode == "USD"? "🇺🇸" : "🇪🇺"; 
+            pos = ['EUR', 'USD'].indexOf(currencyCode)
+            if(pos == -1)   throw new Error("Not supported currencyCode. Try 'USD' or 'EUR'");
             
+            emoji = currencyCode == "USD"? "🇺🇸" : "🇪🇺"; 
+
             return `${emoji} Buy: ${(+response.data[pos].buy).toFixed(2)} Sell: ${(+response.data[pos].sale).toFixed(2)} \n`;
 
         case "Mono":
