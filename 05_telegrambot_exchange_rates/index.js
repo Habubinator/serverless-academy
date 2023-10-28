@@ -143,7 +143,7 @@ async function findExchange(bankName, currencyCode){
 
             pos = ['EUR', 'USD'].indexOf(currencyCode)
             if(pos == -1)   throw new Error("Not supported currencyCode. Try 'USD' or 'EUR'");
-            
+
             emoji = currencyCode == "USD"? "🇺🇸" : "🇪🇺"; 
 
             return `${emoji} Buy: ${(+response.data[pos].buy).toFixed(2)} Sell: ${(+response.data[pos].sale).toFixed(2)} \n`;
@@ -155,26 +155,18 @@ async function findExchange(bankName, currencyCode){
                 response = await axios.get('https://api.monobank.ua/bank/currency');
                 myCache.set("MonoResponce", response, 300);
             }
-
-            let excangeData;
-
-            switch(currencyCode){
-
-                case "USD":
-                    excangeData = response.data.filter((value)=>{
-                        return value.currencyCodeB == 980 && value.currencyCodeA == 840
-                    })
-                    break;
-
-                case "EUR":
-                    excangeData = response.data.filter((value)=>{
-                        return value.currencyCodeB == 980 && value.currencyCodeA == 978
-                    })
-                    break;
-
-                default:
-                    throw new Error("Not supported currencyCode. Try 'USD' or 'EUR'")
+            
+            pos = ['EUR', 'USD'].indexOf(currencyCode)
+            if(pos == -1){
+                throw new Error("Not supported currencyCode. Try 'USD' or 'EUR'");
             }
+            else{
+                var currency = pos == 1? 840 : 978
+            }
+            
+            let excangeData = response.data.filter((value)=>{
+                return value.currencyCodeB == 980 && value.currencyCodeA == currency
+            });
 
             emoji = currencyCode == "USD"? "🇺🇸" : "🇪🇺"; 
 
