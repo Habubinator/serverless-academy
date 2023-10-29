@@ -19,8 +19,8 @@ async function findForecast(interval){
     for (let i = 0; i < weatherDataArr.length; i += step) {
 
         let date = convertTimestamptoTime(weatherDataArr[i].dt)
-        let degrees = (weatherDataArr[i].main.temp - 273.15).toFixed(2)
-        let wind = weatherDataArr[i].wind.speed.toFixed(2)
+        let degrees = (weatherDataArr[i].main.temp - 273.15).toFixed(1)
+        let wind = weatherDataArr[i].wind.speed.toFixed(1)
         let weatherEmoji = findWeatherEmoji(weatherDataArr[i].weather[0].main)
 
         result += `${date} - 🌡️ ${degrees} °C 💨 ${wind} Km/h ${weatherEmoji}\n`;
