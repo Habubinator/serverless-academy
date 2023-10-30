@@ -1,0 +1,11 @@
+{
+  "name": "06_instagram_giveaway",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Hudymenko Yevhenii",
+  "license": "ISC"
+}
