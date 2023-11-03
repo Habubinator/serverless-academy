@@ -63,5 +63,10 @@
     "user": "Oleksiy",
     "gender": "Male",
     "age": 21
+  },
+  {
+    "user": "Sergey",
+    "gender": "Non-Binary",
+    "age": 19
   }
 ]
